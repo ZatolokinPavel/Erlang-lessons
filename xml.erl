@@ -1,16 +1,23 @@
 -module(xml).
 -export([decode/1]).
 
-decode(String) -> decode(String, {<<>>,[],<<>>}).
+decode(String) -> decode(String, {<<>>, [], <<>>}).
 
-decode(<<"</", _/binary>>, Acc) ->
-	Acc;
-decode(<<"<", T/binary>>, {_, [], Cont}) ->
+decode(<<"</", T/binary>>, {Tag, Next, Cont}) ->
+    {Bin, Tag} = tag(T, <<>>),
+    case{Bin == <<>>} of
+        {false} -> {Bin, {Tag, Next, Cont}};
+        {true}  -> {Tag, Next, Cont}
+    end;
+decode(<<"<", T/binary>>, {<<>>, [], Cont}) ->
     {Bin, Tag} = tag(T, <<>>),
 	decode(Bin, {Tag, [], Cont});
-decode(Bin, {Tag, [], _}) ->
+decode(<<"<", T/binary>>, {Tag, Next, Cont}) ->
+    {TT, NextLevel} = decode(<<"<", T/binary>>, {<<>>, [], <<>>}),
+    decode(TT, {Tag, [NextLevel|Next], Cont});
+decode(Bin, {Tag, Next, _}) ->
     {T, Cont} = content(Bin, <<>>),
-	decode(T, {Tag, [], Cont}).
+	decode(T, {Tag, Next, Cont}).
 
 tag(<<">", T/binary>>, Acc) ->
     {T, Acc};
