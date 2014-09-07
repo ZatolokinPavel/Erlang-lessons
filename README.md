@@ -10,7 +10,7 @@ Erlang-lessons
 Добавил обработку атрибутов. Ниже пример.
 
 Даём модулю вот такую конструкцию в бинарном виде:
-<body font="blu" id="100500"><qwerty>content</qwerty>text<p style="cool">abzac</p></body>
+\<body font="blu" id="100500"\>\<qwerty\>content\</qwerty\>text\<p style="cool"\>abzac\</p\>\</body\>\</code\>
 
 На выходе получаем такую:
 {[<<"body">>,{<<"font">>,<<"blu">>},{<<"id">>,<<"100500">>}],
